@@ -1,3 +1,4 @@
+<!-- この２チャンネルクローンは現在間違えてデータベース名をbooklistにしてしまっています -->
 <?php
 error_reporting(-1);
 ini_set('display_errors', 'On');
@@ -10,7 +11,7 @@ $username = 'root';
     // PDO のインスタンスを生成して、MySQLサーバに接続
     $database = new PDO('mysql:host=localhost;dbname=booklist;charset=UTF8;', $username, $password);
 
-    // フォームから書籍タイトルが送信されていればデータベースに保存する
+    // フォームからユーザーからのコメントが送信されていればデータベースに保存する
     if (array_key_exists('name', $_POST) && array_key_exists('content', $_POST)) {
         // 実行するSQLを作成
         $sql = 'insert into contents (name, content) values (:name, :content)';
@@ -26,20 +27,19 @@ $username = 'root';
         // ステートメントを破棄する
         $statement = null;
         
-    }else {
-        echo "全削除が完了しました！";
     }
     if (array_key_exists('del', $_POST)) {
-     // 削除
+     // 削除よう
     $del = 'delete from booklist.contents';
     $statement_two = $database->prepare($del);
     $statement_two->bindParam(':delete', $_POST['delete']);
     $statement_two->execute();
     $statement_two = null;
+    echo "全削除が完了しました！";
     }
 
 
-    // 実行するSQLを作成
+    // 一覧にするSQLを指定
     $sql = 'SELECT * FROM contents ORDER BY created_at DESC';
     // SQLを実行する
     $statement = $database->query($sql);
@@ -79,7 +79,7 @@ $username = 'root';
 </form>
             <hr />
             
-            <h2>書き出し文書</h2>
+            <h2>みんなのコメント</h2>
             <ul>
 <?php
     if ($records) {
@@ -108,6 +108,8 @@ $username = 'root';
 <br>
 <?php
         }
+    }else {
+        echo "現在は何も投稿されていません。";
     }
 ?>
             </ul>
